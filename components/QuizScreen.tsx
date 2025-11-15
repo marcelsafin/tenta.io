@@ -1,6 +1,7 @@
+
 import React, { useState } from 'react';
 import { Question, UserAnswer } from '../types';
-import { CheckCircleIcon, XCircleIcon, LightbulbIcon } from './Icons';
+import { CheckCircleIcon, XCircleIcon, LightbulbIcon, BookOpenIcon } from './Icons';
 import Modal from './Modal';
 
 interface QuizScreenProps {
@@ -49,13 +50,16 @@ const QuizScreen: React.FC<QuizScreenProps> = ({ question, questionNumber, total
             let icon = null;
 
             if (isAnswered) {
-              const isCorrectAnswer = option.text === question.correctAnswer;
               const isSelectedAnswer = option.text === lastAnswerResult.answer;
 
-              if (isCorrectAnswer) {
+              const isCorrectOption = question.correctAnswer.includes(', ')
+                ? question.correctAnswer.split(', ').map(s => s.trim()).includes(option.text)
+                : option.text === question.correctAnswer;
+
+              if (isCorrectOption) {
                 optionClassName = 'bg-green-900/20 border-green-800';
                 icon = <CheckCircleIcon className="w-6 h-6 text-green-400" />;
-              } else if (isSelectedAnswer && !isCorrectAnswer) {
+              } else if (isSelectedAnswer) {
                 optionClassName = 'bg-red-900/30 border-red-700';
                 icon = <XCircleIcon className="w-6 h-6 text-red-400" />;
               } else {
@@ -117,7 +121,7 @@ const QuizScreen: React.FC<QuizScreenProps> = ({ question, questionNumber, total
       </Modal>
 
       <div className="min-h-screen flex items-center justify-center bg-black p-4 relative">
-        <div className="absolute top-4 right-4 md:top-6 md:right-6 z-10">
+        <div className="absolute top-4 right-4 md:top-6 md:right-8 z-10">
           <button
             type="button"
             onClick={handleExitClick}
@@ -195,8 +199,32 @@ const QuizScreen: React.FC<QuizScreenProps> = ({ question, questionNumber, total
                       {lastAnswerResult.feedback && <p className="text-zinc-300 mt-1">{lastAnswerResult.feedback}</p>}
                     </div>
                   </div>
+
+                  {!lastAnswerResult.isCorrect && (
+                    <div className="mt-4 pt-4 border-t border-orange-700/50">
+                      <h4 className="text-lg font-semibold text-zinc-200 mb-3">Förbättringsförslag</h4>
+                      
+                      {question.simpleCorrectAnswer && (
+                        <div className="mb-4">
+                          <p className="text-sm font-bold text-zinc-400 mb-1">Enkel förklaring:</p>
+                          <p className="text-zinc-300">{question.simpleCorrectAnswer}</p>
+                        </div>
+                      )}
+
+                      {question.w3sLink && (
+                        <div>
+                            <p className="text-sm font-bold text-zinc-400 mb-2">Lär dig mer:</p>
+                            <a href={question.w3sLink} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-zinc-800 text-zinc-200 hover:bg-zinc-700 transition-colors">
+                            <BookOpenIcon className="w-5 h-5" />
+                            Läs på W3Schools
+                            </a>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               )}
+
 
               <div className="mt-8">
                 {isAnswered ? (

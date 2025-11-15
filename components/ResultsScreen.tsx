@@ -1,6 +1,7 @@
+
 import React from 'react';
 import { UserAnswer } from '../types';
-import { CheckCircleIcon, XCircleIcon } from './Icons';
+import { CheckCircleIcon, XCircleIcon, BookOpenIcon } from './Icons';
 
 interface ResultsScreenProps {
   answers: UserAnswer[];
@@ -52,15 +53,32 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ answers, onRestart }) => 
               </div>
 
               {!ans.isCorrect && (
-                <div className="bg-green-900/20 p-3 rounded-md mb-3 border border-green-800">
-                   <p className="text-sm text-green-400 mb-1">Korrekt svar/koncept:</p>
-                   <p className="text-green-200 whitespace-pre-wrap">{ans.question.correctAnswer}</p>
-                </div>
+                 <div className="bg-orange-900/10 p-3 rounded-md mb-3 border border-orange-800/50 space-y-3">
+                    <div>
+                      <p className="text-sm text-orange-400/80 mb-1 font-semibold">Korrekt svar/koncept:</p>
+                      <p className="text-zinc-200 whitespace-pre-wrap text-sm">{ans.question.correctAnswer}</p>
+                    </div>
+                    {ans.question.simpleCorrectAnswer && (
+                        <div>
+                            <p className="text-sm text-orange-400/80 mb-1 font-semibold">Enkel förklaring:</p>
+                            <p className="text-zinc-200 whitespace-pre-wrap text-sm">{ans.question.simpleCorrectAnswer}</p>
+                        </div>
+                    )}
+                     {ans.question.w3sLink && (
+                        <div>
+                            <p className="text-sm text-orange-400/80 mb-2 font-semibold">Lär dig mer:</p>
+                            <a href={ans.question.w3sLink} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm font-semibold bg-zinc-800 text-zinc-200 hover:bg-zinc-700 transition-colors">
+                            <BookOpenIcon className="w-4 h-4" />
+                            W3Schools
+                            </a>
+                        </div>
+                      )}
+                 </div>
               )}
               
               {ans.feedback && (
                 <div className="bg-zinc-900/50 p-3 rounded-md border border-zinc-800">
-                     <p className="text-sm text-zinc-400 mb-1">Feedback:</p>
+                     <p className="text-sm text-zinc-400 mb-1">Feedback från AI:</p>
                      <p className="text-zinc-200 whitespace-pre-wrap">{ans.feedback}</p>
                 </div>
               )}

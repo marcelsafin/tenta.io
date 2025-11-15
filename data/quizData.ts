@@ -1,3 +1,4 @@
+
 import { Question } from '../types';
 
 export const quizQuestions: Question[] = [
@@ -11,7 +12,9 @@ export const quizQuestions: Question[] = [
     correctAnswer: "Ett internt datalager för en komponent",
     points: 1,
     feedbackForWrongAnswer: "Fel. State är ett internt datalager som är specifikt för en komponent och hanterar data som kan förändras över tid.",
-    hint: "Är det något som delas mellan komponenter, eller tillhör det en enda?"
+    hint: "Är det något som delas mellan komponenter, eller tillhör det en enda?",
+    simpleCorrectAnswer: "State är som en komponents minne. Det är data som komponenten själv kan ändra på, vilket får den att visas på nytt med den nya datan.",
+    w3sLink: "https://www.w3schools.com/react/react_state.asp",
   },
   {
     questionText: "Vad används för att skicka data till en komponent utifrån?",
@@ -24,7 +27,9 @@ export const quizQuestions: Question[] = [
     correctAnswer: "props",
     points: 1,
     feedbackForWrongAnswer: "Fel. 'props' (properties) är det korrekta sättet att skicka data från en förälderkomponent ner till en barnkomponent.",
-    hint: "Det är en förkortning av 'properties'."
+    hint: "Det är en förkortning av 'properties'.",
+    simpleCorrectAnswer: "Props är som att skicka meddelanden till en komponent. En förälder-komponent kan skicka data (props) till sina barn-komponenter för att berätta vad de ska visa.",
+    w3sLink: "https://www.w3schools.com/react/react_props.asp",
   },
   {
     questionText: "Attribut på komponenter kallas för…",
@@ -38,7 +43,9 @@ export const quizQuestions: Question[] = [
     correctAnswer: "Props",
     points: 1,
     feedbackForWrongAnswer: "Fel. Attribut som skickas till en React-komponent kallas för 'props'.",
-    hint: "Det är så man skickar data till en komponent, vilket är relaterat till föregående fråga."
+    hint: "Det är så man skickar data till en komponent, vilket är relaterat till föregående fråga.",
+    simpleCorrectAnswer: "Precis som vanliga HTML-taggar kan ha attribut (t.ex. <img src='...'>), kan React-komponenter ha attribut. Dessa kallas för props.",
+    w3sLink: "https://www.w3schools.com/react/react_props.asp",
   },
   {
     questionText: "Hur binder du funktionen onAddTodoClick till när knappen nedan klickas på i JSX?",
@@ -56,7 +63,9 @@ export const quizQuestions: Question[] = [
     correctAnswer: "<button onClick={onAddTodoClick} />",
     points: 1,
     feedbackForWrongAnswer: "Fel. I JSX använder man måsvingar {} för att referera till JavaScript-uttryck. Funktionen ska skickas som en referens, inte anropas direkt.",
-    hint: "I JSX använder man ett speciellt teckenpar för att inkludera JavaScript-uttryck."
+    hint: "I JSX använder man ett speciellt teckenpar för att inkludera JavaScript-uttryck.",
+    simpleCorrectAnswer: "Du använder måsvingar {} för att tala om för JSX att 'det här är JavaScript'. Du skickar med namnet på funktionen utan parenteser, t.ex. {minFunktion}.",
+    w3sLink: "https://www.w3schools.com/react/react_events.asp",
   },
   {
     questionText: "Varför måste du använda className när du vill ge ett element en CSS-klass med React JSX?",
@@ -64,7 +73,9 @@ export const quizQuestions: Question[] = [
     correctAnswer: "För att JSX är JavaScript och inte HTML, och 'class' är ett skyddat nyckelord (reserved keyword) i JavaScript.",
     points: 2,
     feedbackForWrongAnswer: "Eftersom JSX kompileras till JavaScript, där 'class' är ett reserverat ord för att skapa klasser, används 'className' istället för att undvika konflikter.",
-    hint: "Tänk på vilket språk JSX kompileras till, och vilka ord som är reserverade där."
+    hint: "Tänk på vilket språk JSX kompileras till, och vilka ord som är reserverade där.",
+    simpleCorrectAnswer: "Ordet 'class' är upptaget i JavaScript för att skapa klasser (class MyClass {}). Eftersom JSX är JavaScript, måste vi använda ett annat ord, 'className', för CSS-klasser.",
+    w3sLink: "https://www.w3schools.com/react/react_jsx.asp",
   },
   {
     questionText: "Hur kan du få en kodsnutt att köra efter att en komponent renderats första gången men inte vid efterföljande renderingar?",
@@ -265,17 +276,19 @@ export const quizQuestions: Question[] = [
     questionType: 'multiple-choice',
     options: [
       { text: "Authentication", isCorrect: true },
-      { text: "Hosting", isCorrect: true },
+      { text: "Hosting", isCorrect: false },
       { text: "Cloud Firestore", isCorrect: true },
       { text: "Machine Learning", isCorrect: false },
       { text: "Cloud Functions", isCorrect: false },
-      { text: "Cloud Storage", isCorrect: false },
+      { text: "Cloud Storage", isCorrect: true },
       { text: "Realtime Database", isCorrect: false },
     ],
-    correctAnswer: "Authentication, Hosting, Cloud Firestore",
+    correctAnswer: "Authentication, Cloud Firestore, Cloud Storage",
     points: 1,
-    feedbackForWrongAnswer: "Det korrekta svaret beror på kursen, men en vanlig kombination är Authentication, Hosting och Cloud Firestore.",
-    hint: "Tänk på inloggning, databas och hosting."
+    feedbackForWrongAnswer: "De korrekta svaren är Authentication, Cloud Firestore och Cloud Storage.",
+    hint: "Tänk på inloggning, databas och fillagring.",
+    simpleCorrectAnswer: "Under kursen har vi använt Authentication för inloggning, Cloud Firestore som vår databas och Cloud Storage för att lagra filer som t.ex. bilder.",
+    w3sLink: "https://firebase.google.com/docs/web/setup",
   },
   {
     questionText: "Vad är skillnaden mellan Firebase och Cloud Firestore?",

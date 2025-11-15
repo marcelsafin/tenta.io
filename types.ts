@@ -12,6 +12,8 @@ export interface Question {
   points: number;
   feedbackForWrongAnswer: string;
   hint?: string;
+  w3sLink?: string;
+  simpleCorrectAnswer?: string;
 }
 
 export interface UserAnswer {
