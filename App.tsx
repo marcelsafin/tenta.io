@@ -16,6 +16,10 @@ const App: React.FC = () => {
   const [selectedAnswer, setSelectedAnswer] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
 
+  const [isHintLoading, setIsHintLoading] = useState(false);
+  const [hint, setHint] = useState<string | null>(null);
+  const [hintUsed, setHintUsed] = useState(false);
+
   const handleStartQuiz = useCallback((mode: 'linear' | 'shuffle') => {
     setAppState('loading');
     setError(null);
@@ -49,6 +53,23 @@ const App: React.FC = () => {
     }
   }, []);
 
+  const handleGetHint = useCallback(() => {
+    if (hintUsed || isHintLoading) return;
+
+    setIsHintLoading(true);
+    const currentQuestion = questions[currentQuestionIndex];
+    const hintText = currentQuestion.hint || "Inget tips tillgängligt för denna fråga.";
+
+    // Simulate a short loading time for better UX, even though it's instant
+    setTimeout(() => {
+        setHint(hintText);
+        setHintUsed(true);
+        setIsHintLoading(false);
+    }, 300);
+
+  }, [currentQuestionIndex, questions, hintUsed, isHintLoading]);
+
+
   const handleAnswerSubmit = useCallback(async () => {
     const currentQuestion = questions[currentQuestionIndex];
     const answer = selectedAnswer;
@@ -64,9 +85,11 @@ const App: React.FC = () => {
       }
 
       const finalIsCorrect = isCorrect || isAlsoCorrect;
+      
+      const score = finalIsCorrect ? currentQuestion.points : 0;
 
       result = {
-        score: finalIsCorrect ? currentQuestion.points : 0,
+        score: score,
         feedback: finalIsCorrect ? "" : currentQuestion.feedbackForWrongAnswer,
         isCorrect: finalIsCorrect,
       };
@@ -74,6 +97,7 @@ const App: React.FC = () => {
       setAppState('grading');
       try {
         const gradingResult = await gradeOpenEndedAnswer(currentQuestion, answer);
+        
         result = {
           ...gradingResult,
           isCorrect: gradingResult.score === currentQuestion.points,
@@ -102,6 +126,8 @@ const App: React.FC = () => {
   const handleNextQuestion = useCallback(() => {
     setLastAnswerResult(null);
     setSelectedAnswer('');
+    setHint(null);
+    setHintUsed(false);
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex(prev => prev + 1);
     } else {
@@ -118,6 +144,9 @@ const App: React.FC = () => {
     setError(null);
     setLastAnswerResult(null);
     setSelectedAnswer('');
+    setHint(null);
+    setHintUsed(false);
+    setIsHintLoading(false);
   };
 
   const renderContent = () => {
@@ -141,6 +170,10 @@ const App: React.FC = () => {
             isLastQuestion={currentQuestionIndex === questions.length - 1}
             selectedAnswer={selectedAnswer}
             setSelectedAnswer={setSelectedAnswer}
+            onGetHint={handleGetHint}
+            isHintLoading={isHintLoading}
+            hint={hint}
+            hintUsed={hintUsed}
           />
         );
       case 'results':

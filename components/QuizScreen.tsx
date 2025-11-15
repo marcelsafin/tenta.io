@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Question, UserAnswer } from '../types';
-import { CheckCircleIcon, XCircleIcon } from './Icons';
+import { CheckCircleIcon, XCircleIcon, LightbulbIcon } from './Icons';
 import Modal from './Modal';
 
 interface QuizScreenProps {
@@ -14,9 +14,13 @@ interface QuizScreenProps {
   isLastQuestion: boolean;
   selectedAnswer: string;
   setSelectedAnswer: (answer: string) => void;
+  onGetHint: () => void;
+  isHintLoading: boolean;
+  hint: string | null;
+  hintUsed: boolean;
 }
 
-const QuizScreen: React.FC<QuizScreenProps> = ({ question, questionNumber, totalQuestions, onSubmit, onNextQuestion, onExit, lastAnswerResult, isLastQuestion, selectedAnswer, setSelectedAnswer }) => {
+const QuizScreen: React.FC<QuizScreenProps> = ({ question, questionNumber, totalQuestions, onSubmit, onNextQuestion, onExit, lastAnswerResult, isLastQuestion, selectedAnswer, setSelectedAnswer, onGetHint, isHintLoading, hint, hintUsed }) => {
   const [isExitModalOpen, setIsExitModalOpen] = useState(false);
   const isAnswered = !!lastAnswerResult;
 
@@ -113,7 +117,7 @@ const QuizScreen: React.FC<QuizScreenProps> = ({ question, questionNumber, total
       </Modal>
 
       <div className="min-h-screen flex items-center justify-center bg-black p-4 relative">
-        <div className="absolute top-6 right-6 z-10">
+        <div className="absolute top-4 right-4 md:top-6 md:right-6 z-10">
           <button
             type="button"
             onClick={handleExitClick}
@@ -143,9 +147,39 @@ const QuizScreen: React.FC<QuizScreenProps> = ({ question, questionNumber, total
               </div>
             </div>
 
-            <h2 className="text-2xl md:text-3xl font-bold text-white mb-6 leading-tight">{question.questionText}</h2>
+            <div className="flex justify-between items-start gap-4 mb-6">
+                 <h2 className="text-2xl md:text-3xl font-bold text-white leading-tight flex-1">{question.questionText}</h2>
+                 <div className="flex flex-col items-center">
+                    <button
+                        onClick={onGetHint}
+                        disabled={isHintLoading || hintUsed || isAnswered}
+                        className="flex-shrink-0 flex items-center gap-2 px-3 py-2 rounded-full text-sm font-semibold bg-zinc-800 text-zinc-300 hover:bg-zinc-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        aria-label="Få ett tips"
+                    >
+                        {isHintLoading ? (
+                            <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white"></div>
+                        ) : (
+                            <LightbulbIcon className="w-5 h-5" />
+                        )}
+                        <span>Tips</span>
+                    </button>
+                 </div>
+            </div>
 
             <form onSubmit={handleSubmit}>
+              
+              {hint && (
+                <div className="mb-6 p-4 rounded-lg bg-yellow-900/30 border border-yellow-700/50">
+                    <div className="flex items-start">
+                        <LightbulbIcon className="w-6 h-6 text-yellow-400 mr-3 flex-shrink-0 mt-0.5" />
+                        <div>
+                            <h3 className="text-lg font-bold text-yellow-300">Tips</h3>
+                            <p className="text-zinc-300 mt-1">{hint}</p>
+                        </div>
+                    </div>
+                </div>
+              )}
+
               <div className="mb-6">
                 {renderQuestionBody()}
               </div>

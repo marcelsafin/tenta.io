@@ -11,6 +11,7 @@ export interface Question {
   correctAnswer: string;
   points: number;
   feedbackForWrongAnswer: string;
+  hint?: string;
 }
 
 export interface UserAnswer {
