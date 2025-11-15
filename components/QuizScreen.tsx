@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Question, UserAnswer } from '../types';
 import { CheckCircleIcon, XCircleIcon } from './Icons';
+import Modal from './Modal';
 
 interface QuizScreenProps {
   question: Question;
@@ -16,6 +17,7 @@ interface QuizScreenProps {
 }
 
 const QuizScreen: React.FC<QuizScreenProps> = ({ question, questionNumber, totalQuestions, onSubmit, onNextQuestion, onExit, lastAnswerResult, isLastQuestion, selectedAnswer, setSelectedAnswer }) => {
+  const [isExitModalOpen, setIsExitModalOpen] = useState(false);
   const isAnswered = !!lastAnswerResult;
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -24,10 +26,13 @@ const QuizScreen: React.FC<QuizScreenProps> = ({ question, questionNumber, total
     onSubmit();
   };
 
-  const handleExit = () => {
-    if (window.confirm("Är du säker på att du vill avsluta provet? Dina framsteg kommer att förloras.")) {
-      onExit();
-    }
+  const handleExitClick = () => {
+    setIsExitModalOpen(true);
+  };
+
+  const handleConfirmExit = () => {
+    setIsExitModalOpen(false);
+    onExit();
   };
 
   const renderQuestionBody = () => {
@@ -96,82 +101,94 @@ const QuizScreen: React.FC<QuizScreenProps> = ({ question, questionNumber, total
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-black p-4 relative">
-      <div className="absolute top-6 right-6 z-10">
-        <button
-          type="button"
-          onClick={handleExit}
-          className="text-zinc-500 hover:text-white transition-colors"
-          aria-label="Avsluta provet och återgå till menyn"
-        >
-          <XCircleIcon className="w-8 h-8" />
-        </button>
-      </div>
+    <>
+      <Modal
+        isOpen={isExitModalOpen}
+        onClose={() => setIsExitModalOpen(false)}
+        onConfirm={handleConfirmExit}
+        title="Avsluta provet"
+        confirmText="Avsluta"
+      >
+        <p>Är du säker på att du vill avsluta provet? Dina framsteg kommer att förloras.</p>
+      </Modal>
 
-      <div className="w-full max-w-3xl">
-        <div className="bg-black border border-zinc-800 rounded-2xl shadow-2xl p-6 md:p-8">
-          <div className="mb-6">
-            <div className="flex justify-between items-center text-zinc-400 mb-2">
-              <span>Fråga {questionNumber} av {totalQuestions}</span>
-               {isAnswered && lastAnswerResult ? (
-                <div className={`font-bold flex items-center gap-2 px-3 py-1 rounded-full text-sm ${lastAnswerResult.isCorrect ? 'bg-green-900/30 text-green-400' : 'bg-red-900/30 text-red-400'}`}>
-                  {lastAnswerResult.isCorrect ? <CheckCircleIcon className="w-5 h-5"/> : <XCircleIcon className="w-5 h-5"/>}
-                  <span>{lastAnswerResult.score}/{question.points}p</span>
-                </div>
-              ) : (
-                <span className="font-bold text-zinc-400">{question.points} poäng</span>
-              )}
-            </div>
-            <div className="w-full bg-zinc-800 rounded-full h-2.5">
-              <div className="bg-white h-2.5 rounded-full" style={{ width: `${(questionNumber / totalQuestions) * 100}%` }}></div>
-            </div>
-          </div>
+      <div className="min-h-screen flex items-center justify-center bg-black p-4 relative">
+        <div className="absolute top-6 right-6 z-10">
+          <button
+            type="button"
+            onClick={handleExitClick}
+            className="text-zinc-500 hover:text-white transition-colors"
+            aria-label="Avsluta provet och återgå till menyn"
+          >
+            <XCircleIcon className="w-8 h-8" />
+          </button>
+        </div>
 
-          <h2 className="text-2xl md:text-3xl font-bold text-white mb-6 leading-tight">{question.questionText}</h2>
-
-          <form onSubmit={handleSubmit}>
+        <div className="w-full max-w-3xl">
+          <div className="bg-black border border-zinc-800 rounded-2xl shadow-2xl p-6 md:p-8">
             <div className="mb-6">
-              {renderQuestionBody()}
+              <div className="flex justify-between items-center text-zinc-400 mb-2">
+                <span>Fråga {questionNumber} av {totalQuestions}</span>
+                 {isAnswered && lastAnswerResult ? (
+                  <div className={`font-bold flex items-center gap-2 px-3 py-1 rounded-full text-sm ${lastAnswerResult.isCorrect ? 'bg-green-900/30 text-green-400' : 'bg-red-900/30 text-red-400'}`}>
+                    {lastAnswerResult.isCorrect ? <CheckCircleIcon className="w-5 h-5"/> : <XCircleIcon className="w-5 h-5"/>}
+                    <span>{lastAnswerResult.score}/{question.points}p</span>
+                  </div>
+                ) : (
+                  <span className="font-bold text-zinc-400">{question.points} poäng</span>
+                )}
+              </div>
+              <div className="w-full bg-zinc-800 rounded-full h-2.5">
+                <div className="bg-white h-2.5 rounded-full" style={{ width: `${(questionNumber / totalQuestions) * 100}%` }}></div>
+              </div>
             </div>
-            
-            {isAnswered && lastAnswerResult && !(lastAnswerResult.isCorrect && question.questionType === 'multiple-choice') && (
-              <div className={`mt-6 p-4 rounded-lg border ${lastAnswerResult.isCorrect ? 'bg-green-900/20 border-green-700' : 'bg-orange-900/20 border-orange-700'}`}>
-                <div className="flex items-start">
-                  {lastAnswerResult.isCorrect ? <CheckCircleIcon className="w-8 h-8 text-green-400 mr-3 flex-shrink-0" /> : <XCircleIcon className="w-8 h-8 text-orange-400 mr-3 flex-shrink-0" />}
-                  <div>
-                    <h3 className={`text-xl font-bold ${lastAnswerResult.isCorrect ? 'text-green-300' : 'text-orange-300'}`}>
-                      {lastAnswerResult.isCorrect ? `Rätt! (${lastAnswerResult.score}/${question.points}p)` : `Fel. (${lastAnswerResult.score}/${question.points}p)`}
-                    </h3>
-                    {lastAnswerResult.feedback && <p className="text-zinc-300 mt-1">{lastAnswerResult.feedback}</p>}
+
+            <h2 className="text-2xl md:text-3xl font-bold text-white mb-6 leading-tight">{question.questionText}</h2>
+
+            <form onSubmit={handleSubmit}>
+              <div className="mb-6">
+                {renderQuestionBody()}
+              </div>
+              
+              {isAnswered && lastAnswerResult && !(lastAnswerResult.isCorrect && question.questionType === 'multiple-choice') && (
+                <div className={`mt-6 p-4 rounded-lg border ${lastAnswerResult.isCorrect ? 'bg-green-900/20 border-green-700' : 'bg-orange-900/20 border-orange-700'}`}>
+                  <div className="flex items-start">
+                    {lastAnswerResult.isCorrect ? <CheckCircleIcon className="w-8 h-8 text-green-400 mr-3 flex-shrink-0" /> : <XCircleIcon className="w-8 h-8 text-orange-400 mr-3 flex-shrink-0" />}
+                    <div>
+                      <h3 className={`text-xl font-bold ${lastAnswerResult.isCorrect ? 'text-green-300' : 'text-orange-300'}`}>
+                        {lastAnswerResult.isCorrect ? `Rätt! (${lastAnswerResult.score}/${question.points}p)` : `Fel. (${lastAnswerResult.score}/${question.points}p)`}
+                      </h3>
+                      {lastAnswerResult.feedback && <p className="text-zinc-300 mt-1">{lastAnswerResult.feedback}</p>}
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
-
-            <div className="mt-8">
-              {isAnswered ? (
-                 <button
-                    type="button"
-                    onClick={onNextQuestion}
-                    className="w-full bg-white text-black font-bold py-3 px-6 rounded-lg text-lg hover:bg-zinc-200 transition-all focus:outline-none focus:ring-4 focus:ring-white focus:ring-opacity-50"
-                  >
-                    {isLastQuestion ? 'Visa resultat' : 'Nästa fråga'}
-                  </button>
-              ) : (
-                 <button
-                  type="submit"
-                  disabled={selectedAnswer.trim() === ''}
-                  className="w-full bg-white text-black font-bold py-3 px-6 rounded-lg text-lg hover:bg-zinc-200 transition-all disabled:bg-zinc-800 disabled:text-zinc-500 disabled:cursor-not-allowed focus:outline-none focus:ring-4 focus:ring-white focus:ring-opacity-50"
-                >
-                  Svara
-                </button>
               )}
-            </div>
 
-          </form>
+              <div className="mt-8">
+                {isAnswered ? (
+                   <button
+                      type="button"
+                      onClick={onNextQuestion}
+                      className="w-full bg-white text-black font-bold py-3 px-6 rounded-lg text-lg hover:bg-zinc-200 transition-all focus:outline-none focus:ring-4 focus:ring-white focus:ring-opacity-50"
+                    >
+                      {isLastQuestion ? 'Visa resultat' : 'Nästa fråga'}
+                    </button>
+                ) : (
+                   <button
+                    type="submit"
+                    disabled={selectedAnswer.trim() === ''}
+                    className="w-full bg-white text-black font-bold py-3 px-6 rounded-lg text-lg hover:bg-zinc-200 transition-all disabled:bg-zinc-800 disabled:text-zinc-500 disabled:cursor-not-allowed focus:outline-none focus:ring-4 focus:ring-white focus:ring-opacity-50"
+                  >
+                    Svara
+                  </button>
+                )}
+              </div>
+
+            </form>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
