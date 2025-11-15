@@ -13,23 +13,31 @@ const App: React.FC = () => {
   const [userAnswers, setUserAnswers] = useState<UserAnswer[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [lastAnswerResult, setLastAnswerResult] = useState<UserAnswer | null>(null);
+  const [selectedAnswer, setSelectedAnswer] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
 
-  const handleStartQuiz = useCallback(() => {
+  const handleStartQuiz = useCallback((mode: 'linear' | 'shuffle') => {
     setAppState('loading');
     setError(null);
     try {
-      // Shuffle questions to make it feel different each time
-      const shuffledQuestions = [...quizQuestions].sort(() => Math.random() - 0.5);
+      let questionsToSet: Question[];
+      if (mode === 'shuffle') {
+        // Shuffle questions to make it feel different each time
+        questionsToSet = [...quizQuestions].sort(() => Math.random() - 0.5);
+      } else {
+        // Use questions in their original order
+        questionsToSet = [...quizQuestions];
+      }
 
-      if (shuffledQuestions && shuffledQuestions.length > 0) {
+      if (questionsToSet && questionsToSet.length > 0) {
         // Use a small timeout to ensure the loading screen is visible for a moment,
         // providing a smoother user experience than an instantaneous flash.
         setTimeout(() => {
-          setQuestions(shuffledQuestions);
+          setQuestions(questionsToSet);
           setCurrentQuestionIndex(0);
           setUserAnswers([]);
           setLastAnswerResult(null);
+          setSelectedAnswer('');
           setAppState('quiz');
         }, 500);
       } else {
@@ -41,8 +49,9 @@ const App: React.FC = () => {
     }
   }, []);
 
-  const handleAnswerSubmit = useCallback(async (answer: string) => {
+  const handleAnswerSubmit = useCallback(async () => {
     const currentQuestion = questions[currentQuestionIndex];
+    const answer = selectedAnswer;
     let result: { score: number; feedback: string; isCorrect: boolean };
 
     if (currentQuestion.questionType === 'multiple-choice') {
@@ -88,10 +97,11 @@ const App: React.FC = () => {
     setLastAnswerResult(newUserAnswer);
     setAppState('quiz');
 
-  }, [currentQuestionIndex, questions]);
+  }, [currentQuestionIndex, questions, selectedAnswer]);
   
   const handleNextQuestion = useCallback(() => {
     setLastAnswerResult(null);
+    setSelectedAnswer('');
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex(prev => prev + 1);
     } else {
@@ -107,6 +117,7 @@ const App: React.FC = () => {
     setCurrentQuestionIndex(0);
     setError(null);
     setLastAnswerResult(null);
+    setSelectedAnswer('');
   };
 
   const renderContent = () => {
@@ -127,6 +138,8 @@ const App: React.FC = () => {
             onNextQuestion={handleNextQuestion}
             lastAnswerResult={lastAnswerResult}
             isLastQuestion={currentQuestionIndex === questions.length - 1}
+            selectedAnswer={selectedAnswer}
+            setSelectedAnswer={setSelectedAnswer}
           />
         );
       case 'results':

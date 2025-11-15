@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Question, UserAnswer } from '../types';
 import { CheckCircleIcon, XCircleIcon } from './Icons';
 
@@ -6,25 +6,21 @@ interface QuizScreenProps {
   question: Question;
   questionNumber: number;
   totalQuestions: number;
-  onSubmit: (answer: string) => void;
+  onSubmit: () => void;
   onNextQuestion: () => void;
   lastAnswerResult: UserAnswer | null;
   isLastQuestion: boolean;
+  selectedAnswer: string;
+  setSelectedAnswer: (answer: string) => void;
 }
 
-const QuizScreen: React.FC<QuizScreenProps> = ({ question, questionNumber, totalQuestions, onSubmit, onNextQuestion, lastAnswerResult, isLastQuestion }) => {
-  const [selectedAnswer, setSelectedAnswer] = useState<string>('');
-  
+const QuizScreen: React.FC<QuizScreenProps> = ({ question, questionNumber, totalQuestions, onSubmit, onNextQuestion, lastAnswerResult, isLastQuestion, selectedAnswer, setSelectedAnswer }) => {
   const isAnswered = !!lastAnswerResult;
-
-  useEffect(() => {
-    setSelectedAnswer('');
-  }, [question]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (selectedAnswer.trim() === '' || isAnswered) return;
-    onSubmit(selectedAnswer);
+    onSubmit();
   };
 
   const renderQuestionBody = () => {
