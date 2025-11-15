@@ -24,6 +24,12 @@ const QuizScreen: React.FC<QuizScreenProps> = ({ question, questionNumber, total
     onSubmit();
   };
 
+  const handleExit = () => {
+    if (window.confirm("Är du säker på att du vill avsluta provet? Dina framsteg kommer att förloras.")) {
+      onExit();
+    }
+  };
+
   const renderQuestionBody = () => {
     if (question.questionType === 'multiple-choice' && question.options) {
       return (
@@ -38,7 +44,7 @@ const QuizScreen: React.FC<QuizScreenProps> = ({ question, questionNumber, total
               const isSelectedAnswer = option.text === lastAnswerResult.answer;
 
               if (isCorrectAnswer) {
-                optionClassName = 'bg-green-900/30 border-green-700 scale-105';
+                optionClassName = 'bg-green-900/20 border-green-800';
                 icon = <CheckCircleIcon className="w-6 h-6 text-green-400" />;
               } else if (isSelectedAnswer && !isCorrectAnswer) {
                 optionClassName = 'bg-red-900/30 border-red-700';
@@ -94,7 +100,7 @@ const QuizScreen: React.FC<QuizScreenProps> = ({ question, questionNumber, total
       <div className="absolute top-6 right-6 z-10">
         <button
           type="button"
-          onClick={onExit}
+          onClick={handleExit}
           className="text-zinc-500 hover:text-white transition-colors"
           aria-label="Avsluta provet och återgå till menyn"
         >
@@ -129,11 +135,11 @@ const QuizScreen: React.FC<QuizScreenProps> = ({ question, questionNumber, total
             </div>
             
             {isAnswered && lastAnswerResult && !(lastAnswerResult.isCorrect && question.questionType === 'multiple-choice') && (
-              <div className={`mt-6 p-4 rounded-lg border ${lastAnswerResult.isCorrect ? 'bg-green-900/20 border-green-700' : 'bg-red-900/20 border-red-700'}`}>
+              <div className={`mt-6 p-4 rounded-lg border ${lastAnswerResult.isCorrect ? 'bg-green-900/20 border-green-700' : 'bg-orange-900/20 border-orange-700'}`}>
                 <div className="flex items-start">
-                  {lastAnswerResult.isCorrect ? <CheckCircleIcon className="w-8 h-8 text-green-400 mr-3 flex-shrink-0" /> : <XCircleIcon className="w-8 h-8 text-red-400 mr-3 flex-shrink-0" />}
+                  {lastAnswerResult.isCorrect ? <CheckCircleIcon className="w-8 h-8 text-green-400 mr-3 flex-shrink-0" /> : <XCircleIcon className="w-8 h-8 text-orange-400 mr-3 flex-shrink-0" />}
                   <div>
-                    <h3 className={`text-xl font-bold ${lastAnswerResult.isCorrect ? 'text-green-300' : 'text-red-300'}`}>
+                    <h3 className={`text-xl font-bold ${lastAnswerResult.isCorrect ? 'text-green-300' : 'text-orange-300'}`}>
                       {lastAnswerResult.isCorrect ? `Rätt! (${lastAnswerResult.score}/${question.points}p)` : `Fel. (${lastAnswerResult.score}/${question.points}p)`}
                     </h3>
                     {lastAnswerResult.feedback && <p className="text-zinc-300 mt-1">{lastAnswerResult.feedback}</p>}
