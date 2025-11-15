@@ -1,0 +1,5 @@
+{
+  "name": "React Quiz Generator",
+  "description": "An intelligent quiz generator that creates a personalized test based on your previous results. It uses AI to grade open-ended questions and provide targeted feedback to help you master React concepts.",
+  "requestFramePermissions": []
+}
