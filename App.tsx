@@ -125,9 +125,9 @@ const App: React.FC = () => {
       case 'start':
         return <StartScreen onStart={handleStartQuiz} />;
       case 'loading':
-        return <Loader message="Genererar ditt personliga prov..." />;
+        return <Loader message="Startar..." />;
       case 'grading':
-        return <Loader message="AI:n rättar ditt svar..." />;
+        return <Loader message="Rättar..." />;
       case 'quiz':
         return (
           <QuizScreen
@@ -136,6 +136,7 @@ const App: React.FC = () => {
             totalQuestions={questions.length}
             onSubmit={handleAnswerSubmit}
             onNextQuestion={handleNextQuestion}
+            onExit={handleRestart}
             lastAnswerResult={lastAnswerResult}
             isLastQuestion={currentQuestionIndex === questions.length - 1}
             selectedAnswer={selectedAnswer}

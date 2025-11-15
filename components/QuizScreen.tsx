@@ -8,13 +8,14 @@ interface QuizScreenProps {
   totalQuestions: number;
   onSubmit: () => void;
   onNextQuestion: () => void;
+  onExit: () => void;
   lastAnswerResult: UserAnswer | null;
   isLastQuestion: boolean;
   selectedAnswer: string;
   setSelectedAnswer: (answer: string) => void;
 }
 
-const QuizScreen: React.FC<QuizScreenProps> = ({ question, questionNumber, totalQuestions, onSubmit, onNextQuestion, lastAnswerResult, isLastQuestion, selectedAnswer, setSelectedAnswer }) => {
+const QuizScreen: React.FC<QuizScreenProps> = ({ question, questionNumber, totalQuestions, onSubmit, onNextQuestion, onExit, lastAnswerResult, isLastQuestion, selectedAnswer, setSelectedAnswer }) => {
   const isAnswered = !!lastAnswerResult;
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -89,7 +90,18 @@ const QuizScreen: React.FC<QuizScreenProps> = ({ question, questionNumber, total
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-black p-4">
+    <div className="min-h-screen flex items-center justify-center bg-black p-4 relative">
+      <div className="absolute top-6 right-6 z-10">
+        <button
+          type="button"
+          onClick={onExit}
+          className="text-zinc-500 hover:text-white transition-colors"
+          aria-label="Avsluta provet och återgå till menyn"
+        >
+          <XCircleIcon className="w-8 h-8" />
+        </button>
+      </div>
+
       <div className="w-full max-w-3xl">
         <div className="bg-black border border-zinc-800 rounded-2xl shadow-2xl p-6 md:p-8">
           <div className="mb-6">
@@ -101,7 +113,7 @@ const QuizScreen: React.FC<QuizScreenProps> = ({ question, questionNumber, total
                   <span>{lastAnswerResult.score}/{question.points}p</span>
                 </div>
               ) : (
-                <span className="font-bold">{question.points} poäng</span>
+                <span className="font-bold text-zinc-400">{question.points} poäng</span>
               )}
             </div>
             <div className="w-full bg-zinc-800 rounded-full h-2.5">
